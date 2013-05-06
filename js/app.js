@@ -1,54 +1,46 @@
-var app = angular.module('boilerplate', []);
+var app = angular.module('boilerplate', ['rb.config']);
 
-app.controller('FirstController', function ($scope) {
-    $scope.message = 'Hello world';
+angular.module('rb.config', []).value('rb.config', {
+    navItems: [
+        { icon: '', title: 'Dedicated servers', subNavItems: [
+            { icon: '', title: 'Windows'},
+            { icon: '', title: 'Apple'},
+            { icon: '', title: 'Ubuntu'}
+        ]},
+        { icon: '', title: 'Virtual servers'},
+        { icon: '', title: 'Shared hosting'},
+        { icon: '', title: 'Domain names'},
+    ]
 });
 
-/**
- * Directive to replace substrings
- *
- * @example
- *
- * <div replace="{ '%name%' : user.name }">Hello %name%</div>
- *
- * This would result in 'Hello name' if user.name had a value 'name' in the current scope.
- *
- * <span replace="{ '%start%' : '1', '%end%', '10' }">From %start% to %end%</span>
- *
- * This would result in 'From 1 to 10'
- */
-app.directive('replace', function () {
+app.controller('SiteNavController', ['$scope', 'rb.config', function ($scope, rbConfig) {
 
-    return function (scope, iElement, iAttrs) {
+    $scope.navItems = rbConfig.navItems || [];
 
-        try {
+    $scope._activeNavItem = undefined;
+    $scope._activeSubNavItem = undefined;
 
-            // Evaluate replacements in scope so expressions can be used
-            var replacements = scope.$eval(iAttrs.replace);
-
-            // Handle invalid replacements
-            if(!angular.isObject(replacements)){
-                return;
-            }
-
-            // Get original HTML content
-            var html = iElement.html();
-
-            // Perform replacements
-            angular.forEach(replacements, function(to, from){
-               if(to){
-                   html = html.replace(from, to);
-               }
-            });
-
-            // Replace HTML with new HTML
-            iElement.html(html);
-
+    $scope.toggleNavItem = function(item){
+        if($scope.isActiveNavItem(item)){
+            return $scope.setActiveNavItem(undefined);
         }
-        catch (err) {
+        $scope.setActiveNavItem(item);
+    };
 
-            // Do nothing if problem occurs
-            return;
-        }
+    $scope.setActiveNavItem = function(item){
+        $scope._activeNavItem = item;
     }
-});
+
+    $scope.isActiveNavItem = function(item){
+        return ($scope._activeNavItem === item) ? true : false;
+    }
+
+    $scope.setActiveSubNavItem = function(item){
+        $scope._activeSubNavItem = item;
+    }
+
+    $scope.isActiveSubNavItem = function(item){
+        return ($scope._activeSubNavItem === item) ? true : false;
+    }
+
+}]);

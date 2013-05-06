@@ -9,11 +9,27 @@
     <script src="components/angular/angular.js"></script>
     <script src="js/app.js"></script>
 </head>
-<body ng-controller="FirstController">
+<body >
+<style>
 
-<div replace="{'old' : 'new'}">
-    Hello my old friend
-</div>
+
+</style>
+
+<ul class="rb-site-nav" ng-controller="SiteNavController">
+
+    <li><input type="text" ng-model="query" class="input-block-level" /></li>
+
+    <li class="rb-site-nav-item" ng-repeat="navItem in navItems | filter:query">
+        <span ng-click="toggleNavItem(navItem)">{{navItem.title}}</span>
+        <ul class="rb-site-subnav" ng-show="navItem.subNavItems.length && isActiveNavItem(navItem)">
+            <li class="rb-site-subnav-item" ng-repeat="subNavItem in navItem.subNavItems | filter:query" ng-class="{'active' : isActiveSubNavItem(subNavItem)}" ng-click="setActiveSubNavItem(subNavItem)">
+                {{subNavItem.title}}
+            </li>
+        </ul>
+    </li>
+</ul>
+
+
 
 </body>
 </html>
